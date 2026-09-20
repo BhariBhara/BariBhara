@@ -70,23 +70,31 @@
   <script>
     var ADMIN_SCRIPT_URL = '';
 
-    function loadDashboard() {
-      var url = document.getElementById('url-input').value.trim();
-      var token = document.getElementById('token-input').value.trim();
+    function loadDashboard(isRetry) {
+      var url = document.getElementById('url-input') ? document.getElementById('url-input').value.trim() : ADMIN_SCRIPT_URL;
+      var token = document.getElementById('token-input') ? document.getElementById('token-input').value.trim() : localStorage.getItem('adminToken');
       if (!url) { alert('আগে Apps Script Web App URL বসান'); return; }
       if (!token) { alert('টোকেন বসান'); return; }
       ADMIN_SCRIPT_URL = url;
       localStorage.setItem('adminScriptUrl', url);
       localStorage.setItem('adminToken', token);
       var fetchUrl = ADMIN_SCRIPT_URL + (ADMIN_SCRIPT_URL.indexOf('?') > -1 ? '&' : '?') + 'token=' + encodeURIComponent(token);
-      document.getElementById('gate').innerHTML = '<p>লোড হচ্ছে...</p>';
-      fetch(fetchUrl).then(function(r) { return r.json(); }).then(function(rows) {
+      if (!isRetry) document.getElementById('gate').innerHTML = '<p>লোড হচ্ছে...</p>';
+      fetch(fetchUrl).then(function(r) {
+        if (!r.ok) throw new Error('bad status');
+        return r.json();
+      }).then(function(rows) {
         if (rows && rows.error) {
           document.getElementById('gate').innerHTML = '<h2>❌ ভুল টোকেন</h2><button onclick="location.reload()" style="margin-top:10px">আবার চেষ্টা করুন</button>';
           return;
         }
         renderDashboard(rows || []);
       }).catch(function() {
+        if (!isRetry) {
+          // Apps Script মাঝেমধ্যে প্রথমবার সাড়া দেয় না — নিজে থেকেই একবার আবার চেষ্টা করা হচ্ছে
+          setTimeout(function() { loadDashboard(true); }, 1500);
+          return;
+        }
         document.getElementById('gate').innerHTML = '<h2>লোড ব্যর্থ</h2><p>ইন্টারনেট চেক করুন অথবা URL ঠিক আছে কিনা দেখুন।</p><button onclick="location.reload()" style="margin-top:10px">আবার চেষ্টা করুন</button>';
       });
     }
