@@ -273,19 +273,10 @@
   <div class="toast" id="toast"></div>
   <script>
     const DEFAULT_TENANTS = [
-      { id:'t1', name:'তুতুল', floor:1, side:'Right', rent:4500, water:300, lineGas:0, hasSubMeter:false, unitRate:12, prevReading:0, mobile:'', nid:null, startMonth:'2024-01', leaveMonth:null, notes:'', advances:[], active:true },
-      { id:'t2', name:'মজিবর', floor:1, side:'Right', rent:3500, water:200, lineGas:0, hasSubMeter:false, unitRate:12, prevReading:0, mobile:'', nid:null, startMonth:'2024-01', leaveMonth:null, notes:'', advances:[], active:true },
-      { id:'t3', name:'হোসনা', floor:1, side:'Left', rent:4000, water:200, lineGas:0, hasSubMeter:false, unitRate:12, prevReading:0, mobile:'', nid:null, startMonth:'2024-01', leaveMonth:null, notes:'', advances:[], active:true },
-      { id:'t4', name:'রমজান', floor:1, side:'Left', rent:3500, water:300, lineGas:0, hasSubMeter:false, unitRate:12, prevReading:0, mobile:'', nid:null, startMonth:'2024-01', leaveMonth:null, notes:'', advances:[], active:true },
-      { id:'t5', name:'নিশাদ', floor:2, side:'', rent:6000, water:300, lineGas:0, hasSubMeter:true, unitRate:12, prevReading:0, mobile:'', nid:null, startMonth:'2024-01', leaveMonth:null, notes:'', advances:[], active:true },
-      { id:'t6', name:'লুবনা', floor:3, side:'', rent:9000, water:600, lineGas:1080, hasSubMeter:false, unitRate:12, prevReading:0, mobile:'', nid:null, startMonth:'2024-01', leaveMonth:null, notes:'', advances:[], active:true },
-      { id:'t7', name:'ফরিদ', floor:4, side:'', rent:6000, water:300, lineGas:0, hasSubMeter:false, unitRate:12, prevReading:0, mobile:'', nid:null, startMonth:'2024-01', leaveMonth:null, notes:'', advances:[], active:true },
-      { id:'t8', name:'মারুফ', floor:5, side:'Right', rent:8500, water:500, lineGas:0, hasSubMeter:false, unitRate:12, prevReading:0, mobile:'', nid:null, startMonth:'2024-01', leaveMonth:null, notes:'', advances:[], active:true },
-      { id:'t9', name:'কামাল', floor:5, side:'Left', rent:9000, water:600, lineGas:0, hasSubMeter:false, unitRate:12, prevReading:0, mobile:'', nid:null, startMonth:'2024-01', leaveMonth:null, notes:'', advances:[], active:true },
-      { id:'t10', name:'রাকিব', floor:6, side:'Right', rent:4500, water:300, lineGas:0, hasSubMeter:true, unitRate:12, prevReading:0, mobile:'', nid:null, startMonth:'2024-01', leaveMonth:null, notes:'', advances:[], active:true },
-      { id:'t11', name:'রুস্তম', floor:6, side:'Left', rent:4500, water:300, lineGas:0, hasSubMeter:true, unitRate:12, prevReading:0, mobile:'', nid:null, startMonth:'2024-01', leaveMonth:null, notes:'', advances:[], active:true }
+      { id:'t1', name:'উদাহরণ ভাড়াটিয়া ১', floor:1, side:'Right', rent:5000, water:300, lineGas:0, hasSubMeter:false, unitRate:12, prevReading:0, mobile:'', nid:null, startMonth:getCurrentMonth(), leaveMonth:null, notes:'', advances:[], active:true },
+      { id:'t2', name:'উদাহরণ ভাড়াটিয়া ২', floor:2, side:'Left', rent:6000, water:300, lineGas:0, hasSubMeter:false, unitRate:12, prevReading:0, mobile:'', nid:null, startMonth:getCurrentMonth(), leaveMonth:null, notes:'এডিট করে নিজের ভাড়াটিয়াদের তথ্য বসান', advances:[], active:true }
     ];
-    let state = { tenants: [], bills: {}, payments: [], currentMonth: getCurrentMonth(), landlord: { name: 'মোঃ জয়নাল আবেদিন', address: 'আনন্দ নগর, মেরুল বাড্ডা', phone: '01313046961' }, drive: { clientId: '', folderName: 'Rent app', fileId: null, lastSync: null } };
+    let state = { tenants: [], bills: {}, payments: [], currentMonth: getCurrentMonth(), landlord: { name: 'আপনার নাম', address: 'আপনার ঠিকানা', phone: '' }, drive: { clientId: '', folderName: 'Rent app', fileId: null, lastSync: null } };
     function getCurrentMonth() {
       const d = new Date();
       return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0');
@@ -316,7 +307,7 @@
           state = JSON.parse(raw);
           if (!state.currentMonth) state.currentMonth = getCurrentMonth();
           if (!state.landlord) {
-            state.landlord = { name: 'মোঃ জয়নাল আবেদিন', address: 'আনন্দ নগর, মেরুল বাড্ডা', phone: '01313046961' };
+            state.landlord = { name: 'আপনার নাম', address: 'আপনার ঠিকানা', phone: '' };
           }
           if (!state.drive) {
             state.drive = { clientId: '', folderName: 'Rent app', fileId: null, lastSync: null };
@@ -348,7 +339,7 @@
           }
           state.currentMonth = getCurrentMonth();
           if (!state.landlord) {
-            state.landlord = { name: 'মোঃ জয়নাল আবেদিন', address: 'আনন্দ নগর, মেরুল বাড্ডা', phone: '01313046961' };
+            state.landlord = { name: 'আপনার নাম', address: 'আপনার ঠিকানা', phone: '' };
           }
           if (!state.drive) {
             state.drive = { clientId: '', folderName: 'Rent app', fileId: null, lastSync: null };
@@ -357,7 +348,7 @@
         }
       } catch(e) {
         state.tenants = JSON.parse(JSON.stringify(DEFAULT_TENANTS));
-        state.landlord = { name: 'মোঃ জয়নাল আবেদিন', address: 'আনন্দ নগর, মেরুল বাড্ডা', phone: '01313046961' };
+        state.landlord = { name: 'আপনার নাম', address: 'আপনার ঠিকানা', phone: '' };
       }
     }
     var _syncTimer = null;
@@ -1061,7 +1052,7 @@
     }
 
     function buildSmsMessage(tenant, paymentsInfo, totalPaid, totalDueAfter, payMethod) {
-      var L = state.landlord || { name: 'মোঃ জয়নাল আবেদিন', address: 'আনন্দ নগর, মেরুল বাড্ডা', phone: '01313046961' };
+      var L = state.landlord || { name: 'আপনার নাম', address: 'আপনার ঠিকানা', phone: '' };
       var now = new Date();
       var dateStr = now.toLocaleDateString('bn-BD');
       var lines = [];
@@ -1100,7 +1091,7 @@
     }
 
     function buildSmsMessageWhatsapp(tenant, paymentsInfo, totalPaid, totalDueAfter, payMethod) {
-      var L = state.landlord || { name: 'মোঃ জয়নাল আবেদিন', address: 'আনন্দ নগর, মেরুল বাড্ডা', phone: '01313046961' };
+      var L = state.landlord || { name: 'আপনার নাম', address: 'আপনার ঠিকানা', phone: '' };
       var now = new Date();
       var dateStr = now.toLocaleDateString('bn-BD');
       var lines = [];
@@ -1135,7 +1126,7 @@
     }
 
     function buildBillSms(tenant, monthKey) {
-      var L = state.landlord || { name: 'মোঃ জয়নাল আবেদিন', address: 'আনন্দ নগর, মেরুল বাড্ডা', phone: '01313046961' };
+      var L = state.landlord || { name: 'আপনার নাম', address: 'আপনার ঠিকানা', phone: '' };
       var bill = calcBill(tenant, monthKey);
       var rentLabel = monthLabel(monthKey);
       var utilLabel = utilMonthLabel(monthKey);
@@ -1165,7 +1156,7 @@
     }
 
     function buildBillWhatsapp(tenant, monthKey) {
-      var L = state.landlord || { name: 'মোঃ জয়নাল আবেদিন', address: 'আনন্দ নগর, মেরুল বাড্ডা', phone: '01313046961' };
+      var L = state.landlord || { name: 'আপনার নাম', address: 'আপনার ঠিকানা', phone: '' };
       var bill = calcBill(tenant, monthKey);
       var rentLabel = monthLabel(monthKey);
       var utilLabel = utilMonthLabel(monthKey);
@@ -1350,7 +1341,7 @@
         dashedLine(y);
         y += 44;
 
-        var L = state.landlord || { name: 'মোঃ জয়নাল আবেদিন', address: 'আনন্দ নগর, মেরুল বাড্ডা', phone: '' };
+        var L = state.landlord || { name: 'আপনার নাম', address: 'আপনার ঠিকানা', phone: '' };
         var monthText = paymentsInfo.map(function(pi) { return monthLabel(pi.month); }).join(' + ');
         var billTotal = paymentsInfo.reduce(function(s, pi) { return s + calcBill(tenant, pi.month).total; }, 0);
 
@@ -1464,7 +1455,7 @@
         ctx.fillText('BILL', W / 2, y);
         y += 26; dashedLine(y); y += 44;
 
-        var L = state.landlord || { name: 'মোঃ জয়নাল আবেদিন', address: 'আনন্দ নগর, মেরুল বাড্ডা' };
+        var L = state.landlord || { name: 'আপনার নাম', address: 'আপনার ঠিকানা' };
         var bill = calcBill(tenant, monthKey);
         var rentLabel = monthLabel(monthKey);
         var utilLabel = utilMonthLabel(monthKey);
@@ -2039,7 +2030,7 @@
     }
 
     function renderSettings() {
-      var L = state.landlord || { name: 'মোঃ জয়নাল আবেদিন', address: 'আনন্দ নগর, মেরুল বাড্ডা', phone: '01313046961' };
+      var L = state.landlord || { name: 'আপনার নাম', address: 'আপনার ঠিকানা', phone: '' };
       var D = getDriveConfig();
       var connected = !!_driveAccessToken;
       if (connected && !_connectedEmail) fetchConnectedEmail();
@@ -2086,7 +2077,7 @@
       html += '<div class="card"><div class="section-title">👤 বাড়িওয়ালার তথ্য (SMS এ যাবে)</div>';
       html += '<label>নাম</label><input id="ll-name" value="' + (L.name||'') + '" />';
       html += '<label>ঠিকানা</label><input id="ll-address" value="' + (L.address||'') + '" />';
-      html += '<label>মোবাইল নম্বর (আপনার)</label><input id="ll-phone" value="' + (L.phone||'') + '" placeholder="01313046961" />';
+      html += '<label>মোবাইল নম্বর (আপনার)</label><input id="ll-phone" value="' + (L.phone||'') + '" placeholder="01XXXXXXXXX" />';
       html += '<button class="btn btn-primary" onclick="saveLandlord()">💾 সেভ করুন</button></div>';
       html += '<div class="card"><div class="section-title">📦 ব্যাকআপ ও রিস্টোর</div>';
       html += '<p style="font-size:0.82rem;color:var(--muted);margin-bottom:10px">সব ডাটা JSON হিসেবে ডাউনলোড করুন। Google Drive এ রাখতে পারবেন।</p>';
@@ -2109,9 +2100,9 @@
 
     function saveLandlord() {
       if (!state.landlord) state.landlord = {};
-      state.landlord.name = document.getElementById('ll-name').value.trim() || 'মোঃ জয়নাল আবেদিন';
-      state.landlord.address = document.getElementById('ll-address').value.trim() || 'আনন্দ নগর, মেরুল বাড্ডা';
-      state.landlord.phone = document.getElementById('ll-phone').value.trim() || '01313046961';
+      state.landlord.name = document.getElementById('ll-name').value.trim() || 'আপনার নাম';
+      state.landlord.address = document.getElementById('ll-address').value.trim() || 'আপনার ঠিকানা';
+      state.landlord.phone = document.getElementById('ll-phone').value.trim() || '';
       saveState();
       toast('বাড়িওয়ালার তথ্য সেভ হয়েছে ✓');
     }
@@ -2676,7 +2667,7 @@
       }
     }
 
-    var APP_VERSION = '2026-09-19-v7-due-row-paid-fix';
+    var APP_VERSION = '2026-09-19-v8-generic-demo-data';
     console.log('বাড়ি ভাড়া ম্যানেজার ভার্সন:', APP_VERSION);
     loadState();
     applyTheme(getSavedTheme());
