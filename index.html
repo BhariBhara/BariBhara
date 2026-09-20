@@ -1391,7 +1391,7 @@
           var numMatch = note.replace(/,/g, '').match(/\d+/);
           noteAmount = numMatch ? parseInt(numMatch[0], 10) : totalDueAfter;
         }
-        var dueToShow = hasNote ? noteAmount : (totalDueAfter || 0);
+        var dueToShow = hasNote ? noteAmount : 0;
         var rows2 = [
           ['মাধ্যম', payMethod || '-'],
           ['তারিখ', dateStr],
@@ -2676,7 +2676,7 @@
       }
     }
 
-    var APP_VERSION = '2026-09-13-v6-remove-status-chip';
+    var APP_VERSION = '2026-09-19-v7-due-row-paid-fix';
     console.log('বাড়ি ভাড়া ম্যানেজার ভার্সন:', APP_VERSION);
     loadState();
     applyTheme(getSavedTheme());
