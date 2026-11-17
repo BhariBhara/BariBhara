@@ -229,12 +229,12 @@
       font-size: 0.7rem; padding: 3px 8px; border-radius: 6px; margin-left: 6px; font-weight: 700;
     }
     .reading-box {
-      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;
+      display: grid; grid-template-columns: 1.2fr 1.3fr 1fr; gap: 6px;
       background: var(--stamp-amber-soft); padding: 12px; border-radius: 10px; margin: 10px 0;
       border: 1px solid var(--stamp-amber);
     }
     .reading-box label { font-size: 0.68rem; margin-bottom: 3px; }
-    .reading-box input { margin-bottom: 0; padding: 8px; font-size: 0.9rem; }
+    .reading-box input { margin-bottom: 0; padding: 8px 4px; font-size: 0.82rem; min-width: 0; text-align: center; }
     .bulk-actions { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
     .sms-box {
       background: var(--stamp-green-soft); border: 1.5px solid var(--stamp-green); border-radius: 12px;
@@ -382,7 +382,7 @@
       for (var i = 0; i < 24; i++) {
         var prevBill = state.bills[mk] && state.bills[mk][tenant.id];
         if (prevBill && prevBill.currentReading !== undefined && prevBill.currentReading !== null) {
-          return parseInt(prevBill.currentReading) || 0;
+          return parseFloat(prevBill.currentReading) || 0;
         }
         mk = prevMonthKey(mk);
       }
@@ -398,11 +398,11 @@
         prevReading = getPrevReading(tenant, monthKey);
         currentReading = (b.currentReading !== undefined && b.currentReading !== null) ? b.currentReading : null;
         if (currentReading !== null) {
-          units = Math.max(0, currentReading - prevReading);
+          units = Math.max(0, Math.round((currentReading - prevReading) * 100) / 100);
         } else {
           units = b.units || 0;
         }
-        electricity = units * (tenant.unitRate || 12);
+        electricity = Math.round(units * (tenant.unitRate || 12));
       }
       // Extra bills (moyla etc.) — can override per month in b.extraAmounts
       var extras = [];
@@ -625,7 +625,7 @@
       html += '<label>সাব-মিটার আছে?</label><select id="edit-sub" onchange="toggleSubFields()"><option value="1"' + (t.hasSubMeter?' selected':'') + '>হ্যাঁ</option><option value="0"' + (!t.hasSubMeter?' selected':'') + '>না</option></select>';
       html += '<div id="sub-fields"' + (t.hasSubMeter ? '' : ' class="hidden"') + '>';
       html += '<label>ইউনিট রেট (৳)</label><input id="edit-rate" type="number" value="' + (t.unitRate||12) + '" />';
-      html += '<label>শুরুর Previous Reading (প্রথম মাসের জন্য)</label><input id="edit-prev" type="number" value="' + (t.prevReading||0) + '" />';
+      html += '<label>শুরুর Previous Reading (প্রথম মাসের জন্য)</label><input id="edit-prev" type="number" step="any" inputmode="decimal" value="' + (t.prevReading||0) + '" />';
       html += '</div>';
       html += '<label>মোবাইল</label><input id="edit-mobile" value="' + (t.mobile||'') + '" placeholder="01XXXXXXXXX" />';
       html += '<label>শুরুর মাস (YYYY-MM)</label><input id="edit-start" value="' + (t.startMonth||'') + '" />';
@@ -722,7 +722,7 @@
         var rateEl = document.getElementById('edit-rate');
         var prevEl = document.getElementById('edit-prev');
         t.unitRate = rateEl ? (parseInt(rateEl.value) || 12) : (t.unitRate || 12);
-        t.prevReading = prevEl ? (parseInt(prevEl.value) || 0) : (t.prevReading || 0);
+        t.prevReading = prevEl ? (parseFloat(prevEl.value) || 0) : (t.prevReading || 0);
       }
       t.mobile = document.getElementById('edit-mobile').value.trim();
       t.startMonth = document.getElementById('edit-start').value.trim();
@@ -799,7 +799,7 @@
       html += '<label>সাব-মিটার আছে?</label><select id="new-sub" onchange="toggleNewSubFields()"><option value="0">না</option><option value="1">হ্যাঁ</option></select>';
       html += '<div id="new-sub-fields" class="hidden">';
       html += '<label>ইউনিট রেট (৳)</label><input id="new-rate" type="number" value="12" />';
-      html += '<label>শুরুর Previous Reading</label><input id="new-prev" type="number" value="0" />';
+      html += '<label>শুরুর Previous Reading</label><input id="new-prev" type="number" step="any" inputmode="decimal" value="0" />';
       html += '</div>';
       html += '<label>মোবাইল</label><input id="new-mobile" />';
       html += '<label>শুরুর মাস</label><input id="new-start" type="month" value="' + getCurrentMonth() + '" />';
@@ -823,7 +823,7 @@
         lineGas: parseInt(document.getElementById('new-linegas').value) || 0,
         hasSubMeter: hasSub,
         unitRate: hasSub ? (parseInt(document.getElementById('new-rate').value) || 12) : 12,
-        prevReading: hasSub ? (parseInt(document.getElementById('new-prev').value) || 0) : 0,
+        prevReading: hasSub ? (parseFloat(document.getElementById('new-prev').value) || 0) : 0,
         mobile: document.getElementById('new-mobile').value.trim(),
         nid: null,
         startMonth: document.getElementById('new-start').value || getCurrentMonth(),
@@ -883,7 +883,7 @@
         html += '</div>';
         if (t.hasSubMeter) {
           html += '<div class="reading-box"><div><label>Previous</label><input type="number" value="' + bill.prevReading + '" readonly /></div>';
-          html += '<div><label>নতুন রিডিং</label><input type="number" id="reading-' + t.id + '" value="' + (bill.currentReading !== null ? bill.currentReading : '') + '" placeholder="লিখুন" onchange="updateReading(\'' + t.id + '\')" /></div>';
+          html += '<div><label>নতুন রিডিং</label><input type="number" step="any" inputmode="decimal" id="reading-' + t.id + '" value="' + (bill.currentReading !== null ? bill.currentReading : '') + '" placeholder="লিখুন" onchange="updateReading(\'' + t.id + '\')" /></div>';
           html += '<div><label>ইউনিট</label><input type="number" value="' + bill.units + '" readonly /></div></div>';
           html += '<div style="font-size:0.78rem;color:var(--muted);margin-bottom:6px">' + bill.units + ' unit × ৳' + (t.unitRate||12) + ' = ৳' + bill.electricity + '</div>';
         }
@@ -914,9 +914,9 @@
       if (val === '' || val === null) {
         b.currentReading = null; b.units = 0;
       } else {
-        b.currentReading = parseInt(val);
+        b.currentReading = parseFloat(val);
         var prev = getPrevReading(t, state.currentMonth);
-        b.units = Math.max(0, b.currentReading - prev);
+        b.units = Math.max(0, Math.round((b.currentReading - prev) * 100) / 100);
       }
       saveState(); render();
     }
@@ -963,7 +963,7 @@
           var cr = u.bill.currentReading !== null && u.bill.currentReading !== undefined ? u.bill.currentReading : '';
           html += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:8px;font-size:0.78rem">';
           html += '<div><label style="margin:0;font-size:0.68rem">Prev</label><input type="number" value="' + pr + '" readonly style="margin:0;padding:6px;font-size:0.85rem" /></div>';
-          html += '<div><label style="margin:0;font-size:0.68rem">নতুন রিডিং</label><input type="number" class="pay-reading" data-month="' + u.month + '" value="' + cr + '" placeholder="লিখুন" style="margin:0;padding:6px;font-size:0.85rem" onchange="savePayReading(\'' + id + '\',this)" /></div>';
+          html += '<div><label style="margin:0;font-size:0.68rem">নতুন রিডিং</label><input type="number" step="any" inputmode="decimal" class="pay-reading" data-month="' + u.month + '" value="' + cr + '" placeholder="লিখুন" style="margin:0;padding:6px;font-size:0.85rem" onchange="savePayReading(\'' + id + '\',this)" /></div>';
           html += '<div><label style="margin:0;font-size:0.68rem">ইউনিট</label><input type="number" value="' + (u.bill.units||0) + '" readonly style="margin:0;padding:6px;font-size:0.85rem" id="pay-units-' + u.month + '" /></div>';
           html += '</div>';
           html += '<div style="font-size:0.75rem;color:var(--muted);margin-top:4px">সাব ৳' + (u.bill.electricity||0) + ' · মোট ৳' + u.bill.total + '</div>';
@@ -1007,9 +1007,9 @@
         b.currentReading = null;
         b.units = 0;
       } else {
-        b.currentReading = parseInt(val);
+        b.currentReading = parseFloat(val);
         var prev = getPrevReading(t, mk);
-        b.units = Math.max(0, b.currentReading - prev);
+        b.units = Math.max(0, Math.round((b.currentReading - prev) * 100) / 100);
       }
       saveState();
       // refresh due on checkbox
@@ -1152,6 +1152,8 @@
       }
       items.push('মোট ৳' + bill.total);
       parts.push(items.join(', '));
+      var dateStrSms = new Date().toLocaleDateString('bn-BD');
+      parts.push('তারিখ: ' + dateStrSms);
       return parts.join('\n');
     }
 
@@ -1180,6 +1182,8 @@
       lines.push('');
       lines.push('*সর্বমোট: ৳' + bill.total + '*');
       if (bill.due) lines.push('_আগের বাকি সহ মোট বকেয়া: ৳' + bill.due + '_');
+      var dateStrWA = new Date().toLocaleDateString('bn-BD');
+      lines.push('📅 ' + dateStrWA);
       return lines.join('\n');
     }
 
@@ -1465,7 +1469,8 @@
         y += 20; dashedLine(y);
         var top1 = y; y += 42;
 
-        var rows = [['ভাড়াটিয়া', tenant.name], ['ফ্লোর', floorText(tenant)], ['বাড়িওয়ালা', L.name], ['মাস', rentLabel]];
+        var billDateStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' });
+        var rows = [['ভাড়াটিয়া', tenant.name], ['ফ্লোর', floorText(tenant)], ['বাড়িওয়ালা', L.name], ['মাস', rentLabel], ['পাঠানোর তারিখ', billDateStr]];
         rows.forEach(function(r) { row(y, r[0], r[1]); y += 46; });
         y -= 46;
         var bottom1 = y + 30;
@@ -2667,7 +2672,7 @@
       }
     }
 
-    var APP_VERSION = '2026-09-19-v8-generic-demo-data';
+    var APP_VERSION = '2026-11-03-v10-meter-fraction';
     console.log('বাড়ি ভাড়া ম্যানেজার ভার্সন:', APP_VERSION);
     loadState();
     applyTheme(getSavedTheme());
